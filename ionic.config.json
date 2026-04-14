@@ -1,0 +1,7 @@
+{
+  "name": "spinApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
