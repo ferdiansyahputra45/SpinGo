@@ -1,20 +1,93 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>🎡 SpinGo</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="showAbout()">
+        ℹ️
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <ion-button expand="full" (click)="toggleSidebar()">
+    📋 DAFTAR ITEM ({{ names.length }})
+  </ion-button>
+
+  <div class="canvas-container">
+    <canvas #wheelCanvas></canvas>
+    <div class="pointer" [style.transform]="'translateX(-50%) translateX(' + pointerMove + 'px) rotate(' + pointerShake + 'deg)'"></div>
   </div>
+
+  <ion-button expand="full" (click)="spin()" class="btn-spin">🎯 SPIN</ion-button>
+
+  <!-- HASIL SPIN - PASTI KELIHATAN -->
+  <div class="result-card" *ngIf="selectedName !== ''">
+    <div class="result-header">
+      <span class="result-icon">🎯</span>
+      <span class="result-title">HASIL SPIN</span>
+      <span class="result-icon">🎯</span>
+    </div>
+    <div class="winner-name">{{ selectedName }}</div>
+    <ion-button color="danger" expand="block" (click)="confirmRemoveSelected()" class="btn-hapus-hasil">
+      ❌ HAPUS {{ selectedName }}
+    </ion-button>
+  </div>
+
+  <!-- RIWAYAT SPIN -->
+  <div class="history-section" *ngIf="history.length > 0">
+    <div class="history-header">
+      <span>📜</span>
+      <span>RIWAYAT SPIN</span>
+      <span>📜</span>
+    </div>
+    <div class="history-list">
+      <span class="history-item" *ngFor="let h of history.slice(-5).reverse()">
+        {{ h }}
+      </span>
+    </div>
+    <ion-button fill="clear" size="small" (click)="confirmClearHistory()" class="btn-clear-history">
+      Hapus riwayat
+    </ion-button>
+  </div>
+
+  <!-- OVERLAY -->
+  <div class="overlay" *ngIf="showSidebar" (click)="toggleSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" [class.open]="showSidebar">
+    <div class="sidebar-header">
+      <h2>📋 DAFTAR ITEM</h2>
+      <ion-button fill="clear" (click)="toggleSidebar()">✕</ion-button>
+    </div>
+
+    <ion-list>
+      <ion-item *ngFor="let name of names; let i = index">
+        <ion-label>{{ name }}</ion-label>
+        <ion-button slot="end" fill="clear" color="danger" (click)="confirmRemoveName(i)">
+          Hapus
+        </ion-button>
+      </ion-item>
+      <ion-item *ngIf="names.length === 0">
+        <ion-label class="ion-text-center" color="medium">✨ Belum ada item. Tambahkan dulu!</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div class="form-tambah">
+      <ion-item lines="none">
+        <ion-input [(ngModel)]="newName" placeholder="Tambah item baru"></ion-input>
+        <ion-button (click)="addName()" [disabled]="!newName.trim()">Tambah</ion-button>
+      </ion-item>
+      
+      <ion-button expand="block" fill="clear" color="danger" (click)="confirmResetAll()" class="btn-reset">
+        🗑️ Reset Semua Item
+      </ion-button>
+
+      <ion-button expand="block" fill="clear" color="warning" (click)="rateApp()" class="btn-rating">
+        ⭐ Beri Rating
+      </ion-button>
+    </div>
+  </div>
+
 </ion-content>
